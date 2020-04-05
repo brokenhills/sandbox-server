@@ -1,2 +1,2 @@
 # sandbox-server
-message storage with mongo and basic auth
+message storage with mongodb and basic auth
