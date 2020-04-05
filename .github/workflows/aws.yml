@@ -33,7 +33,7 @@ name: Build and Deploy to Amazon ECS
 
 jobs:
   build:
-
+    name: Build
     runs-on: ubuntu-latest
 
     steps:
