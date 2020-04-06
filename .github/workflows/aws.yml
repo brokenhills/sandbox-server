@@ -67,17 +67,17 @@ jobs:
         echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
 
     - name: Fill in the new image ID in the Amazon ECS task definition
-      id: first-run-task-definition
+      id: sandbox-app-task
       uses: aws-actions/amazon-ecs-render-task-definition@v1
       with:
-        task-definition: first-run-task-definition.json
-        container-name: sample-app
+        task-definition: sandbox-app-task.json
+        container-name: sandbox-app
         image: ${{ steps.build-image.outputs.image }}
 
     - name: Deploy Amazon ECS task definition
       uses: aws-actions/amazon-ecs-deploy-task-definition@v1
       with:
-        task-definition: ${{ steps.task-def.outputs.task-definition }}
-        service: sample-app-service
-        cluster: default
+        task-definition: sandbox-app-task.json
+        service: sandbox-app-service
+        cluster: sandbox-cluster
         wait-for-service-stability: true
