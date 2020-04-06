@@ -54,8 +54,8 @@ jobs:
     - name: Build, tag, and push image to Amazon ECR
       id: build-image
       env:
-        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        ECR_REPOSITORY: 211231638232.dkr.ecr.us-east-2.amazonaws.com/sanbox-server
+        ECR_REGISTRY: 211231638232.dkr.ecr.us-east-2.amazonaws.com
+        ECR_REPOSITORY: sanbox-server
         IMAGE_TAG: latest #${{ github.sha }}
       run: |
         # Build a docker container and
