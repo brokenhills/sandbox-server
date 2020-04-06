@@ -56,7 +56,7 @@ jobs:
       env:
         ECR_REGISTRY: 211231638232.dkr.ecr.us-east-2.amazonaws.com
         ECR_REPOSITORY: sanbox-server
-        IMAGE_TAG: latest #${{ github.sha }}
+        IMAGE_TAG: latest
       run: |
         # Build a docker container and
         # push it to ECR so that it can
@@ -71,7 +71,7 @@ jobs:
       uses: aws-actions/amazon-ecs-render-task-definition@v1
       with:
         task-definition: first-run-task-definition.json
-        container-name: sanbox-server
+        container-name: sample-app
         image: ${{ steps.build-image.outputs.image }}
 
     - name: Deploy Amazon ECS task definition
