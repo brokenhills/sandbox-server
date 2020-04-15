@@ -22,11 +22,10 @@ import java.util.List;
 public class UserService implements UserDetailsService {
 
     private final MongoTemplate mongoTemplate;
-    private final BCryptPasswordEncoder passwordEncoder;
+    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-    public UserService(MongoTemplate mongoTemplate, BCryptPasswordEncoder passwordEncoder) {
+    public UserService(MongoTemplate mongoTemplate) {
         this.mongoTemplate = mongoTemplate;
-        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
