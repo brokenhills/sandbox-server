@@ -7,7 +7,6 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -29,29 +28,28 @@ public class UserService implements UserDetailsService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
-        SandboxUser user = getUserByLogin(login);
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        SandboxUser user = getUserByUsername(username);
         if (user == null) {
-            throw new UsernameNotFoundException(String.format("User with login: %s was not found!", login));
+            throw new UsernameNotFoundException(String.format("User with username: %s was not found!", username));
         }
-        List<SimpleGrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority("user"));
-        return new User(user.getLogin(), user.getPassword(), authorities);
+        return user;
     }
 
-    public void createUser(String login, String password, UserStatus status) {
+    public void createUser(String username, String password, UserStatus status) {
         SandboxUser newUser = new SandboxUser();
-        newUser.setLogin(login);
+        newUser.setUsername(username);
         newUser.setPassword(passwordEncoder.encode(password));
-        newUser.setStatus(status);
+        newUser.setAuthorities(Collections.singletonList(new SimpleGrantedAuthority(status.getValue())));
         mongoTemplate.save(newUser);
     }
 
-    public SandboxUser getUserByLogin(String login) {
+    public SandboxUser getUserByUsername(String username) {
         Query query = new Query();
-        query.addCriteria(Criteria.where("login").is(login));
+        query.addCriteria(Criteria.where("username").is(username));
         List<SandboxUser> searchedUser = mongoTemplate.find(query, SandboxUser.class);
         if (searchedUser.size() > 1) {
-            throw new RuntimeException(String.format("More than one user with login: %s were found!", login));
+            throw new RuntimeException(String.format("More than one user with username: %s were found!", username));
         }
         return searchedUser.get(0);
     }
@@ -60,8 +58,8 @@ public class UserService implements UserDetailsService {
         return mongoTemplate.findAll(SandboxUser.class);
     }
 
-    public void deleteUser(String login) {
-        mongoTemplate.remove(getUserByLogin(login));
+    public void deleteUser(String username) {
+        mongoTemplate.remove(getUserByUsername(username));
     }
 
 }
